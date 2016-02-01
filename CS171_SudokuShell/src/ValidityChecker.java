@@ -9,9 +9,10 @@ public class ValidityChecker {
 	
 	HashMap<String, String> validMap = null;
 	ResultSet resultSet;
-	public static final String passString = "[pass]";
-	public static final String failString = "[fail]";
-	public static final String initString = "[init]";
+	public static final String PASS_STR = "[pass]";
+	public static final String FAIL_STR = "[fail]";
+	public static final String INIT_STR = "[init]";
+	public static final String UNSPECIFIED_STR = "[GRADING-RULE-UNSPECIFIED]";
 	
 	public ValidityChecker(ResultSet resultSet){
 		this.resultSet = resultSet;
@@ -20,59 +21,82 @@ public class ValidityChecker {
 		int N = resultSet.getN();
 		validMap = new HashMap<String, String>();
 		
-		validMap.put(ResultSet.total_start, initString);
-		validMap.put(ResultSet.preprocessing_start, initString);
-		validMap.put(ResultSet.preprocessing_done, initString);
-		validMap.put(ResultSet.search_start, initString);
-		validMap.put(ResultSet.search_done, initString);
-		validMap.put(ResultSet.solution_time, initString);
-		validMap.put(ResultSet.status, initString);
-		validMap.put(ResultSet.solution, initString);
-		validMap.put(ResultSet.count_node, initString);
-		validMap.put(ResultSet.count_deadends, initString);
+		validMap.put(ResultSet.total_start, INIT_STR);
+		validMap.put(ResultSet.preprocessing_start, INIT_STR);
+		validMap.put(ResultSet.preprocessing_done, INIT_STR);
+		validMap.put(ResultSet.search_start, INIT_STR);
+		validMap.put(ResultSet.search_done, INIT_STR);
+		validMap.put(ResultSet.solution_time, INIT_STR);
+		validMap.put(ResultSet.status, INIT_STR);
+		validMap.put(ResultSet.solution, INIT_STR);
+		validMap.put(ResultSet.count_node, INIT_STR);
+		validMap.put(ResultSet.count_deadends, INIT_STR);
 		
+		/*
 		if((int)(resultSet.resultMap.get(ResultSet.total_start)) >= 0)
-			validMap.put(ResultSet.total_start, passString);
+			validMap.put(ResultSet.total_start, PASS_STR);
 		else
-			validMap.put(ResultSet.total_start, failString);
+			validMap.put(ResultSet.total_start, FAIL_STR);
 		
 		if((int)(resultSet.resultMap.get(ResultSet.preprocessing_start)) >= 0)
-			validMap.put(ResultSet.preprocessing_start, passString);
+			validMap.put(ResultSet.preprocessing_start, PASS_STR);
 		else
-			validMap.put(ResultSet.preprocessing_start, failString);
+			validMap.put(ResultSet.preprocessing_start, FAIL_STR);
 			
 		if((int)(resultSet.resultMap.get(ResultSet.preprocessing_done)) >= 0 &&
 				((int)(resultSet.resultMap.get(ResultSet.preprocessing_done)) >= 
 				 (int)(resultSet.resultMap.get(ResultSet.preprocessing_start))
 				)
 			)
-			validMap.put(ResultSet.preprocessing_done, passString);
+			validMap.put(ResultSet.preprocessing_done, PASS_STR);
 		else
-			validMap.put(ResultSet.preprocessing_done, failString);
+			validMap.put(ResultSet.preprocessing_done, FAIL_STR);
 			
 		if((int)(resultSet.resultMap.get(ResultSet.search_start)) >= 0)
-			validMap.put(ResultSet.search_start, passString);
+			validMap.put(ResultSet.search_start, PASS_STR);
 		else
-			validMap.put(ResultSet.search_start, failString);
+			validMap.put(ResultSet.search_start, FAIL_STR);
 			
 		if((int)(resultSet.resultMap.get(ResultSet.search_done)) >= 0 &&
 				((int)(resultSet.resultMap.get(ResultSet.search_done)) >= 
 				 (int)(resultSet.resultMap.get(ResultSet.search_start))
 				)
 			)
-			validMap.put(ResultSet.search_done, passString);
+			validMap.put(ResultSet.search_done, PASS_STR);
 		else
-			validMap.put(ResultSet.search_done, failString);
+			validMap.put(ResultSet.search_done, FAIL_STR);
 			
 		if((int)(resultSet.resultMap.get(ResultSet.solution_time)) >= 0)
-			validMap.put(ResultSet.solution_time, passString);
+			validMap.put(ResultSet.solution_time, PASS_STR);
 		else
-			validMap.put(ResultSet.solution_time, failString);
+			validMap.put(ResultSet.solution_time, FAIL_STR);
+			
+		if((int)(resultSet.resultMap.get(ResultSet.count_node)) >= 0)
+			validMap.put(ResultSet.count_node, PASS_STR);
+		else
+			validMap.put(ResultSet.count_node, FAIL_STR);
+		
+		if((int)(resultSet.resultMap.get(ResultSet.count_deadends)) >= 0)
+			validMap.put(ResultSet.count_deadends, PASS_STR);
+		else
+			validMap.put(ResultSet.count_deadends, FAIL_STR);
+			
+			
+		*/
+		
+		validMap.put(ResultSet.total_start, UNSPECIFIED_STR);
+		validMap.put(ResultSet.preprocessing_start, UNSPECIFIED_STR);
+		validMap.put(ResultSet.preprocessing_done, UNSPECIFIED_STR);
+		validMap.put(ResultSet.search_start, UNSPECIFIED_STR);
+		validMap.put(ResultSet.search_done, UNSPECIFIED_STR);
+		validMap.put(ResultSet.solution_time, UNSPECIFIED_STR);
+		validMap.put(ResultSet.count_node, UNSPECIFIED_STR);
+		validMap.put(ResultSet.count_deadends, UNSPECIFIED_STR);
 		
 		if(((String)(resultSet.resultMap.get(ResultSet.status))).toLowerCase().equals("success")){
-			validMap.put(ResultSet.status, passString);
+			validMap.put(ResultSet.status, PASS_STR);
 		}else{
-			validMap.put(ResultSet.status, failString);
+			validMap.put(ResultSet.status, FAIL_STR);
 		}
 		
 		//if((int)(resultSet.resultMap.get(ResultSet.solution)) >= 0){
@@ -126,19 +150,10 @@ public class ValidityChecker {
 		}
 			
 		if(isValid){	
-			validMap.put(ResultSet.solution, passString);
+			validMap.put(ResultSet.solution, PASS_STR);
 		}else{
-			validMap.put(ResultSet.solution, failString);
+			validMap.put(ResultSet.solution, FAIL_STR);
 		}
-		if((int)(resultSet.resultMap.get(ResultSet.count_node)) >= 0)
-			validMap.put(ResultSet.count_node, passString);
-		else
-			validMap.put(ResultSet.count_node, failString);
-		
-		if((int)(resultSet.resultMap.get(ResultSet.count_deadends)) >= 0)
-			validMap.put(ResultSet.count_deadends, passString);
-		else
-			validMap.put(ResultSet.count_deadends, failString);
 		
 	}
 	

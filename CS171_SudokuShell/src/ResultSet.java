@@ -1,6 +1,8 @@
 import java.util.HashMap;
 import java.util.Map;
 
+import sudoku.SudokuFile;
+
 public class ResultSet {
 	int N, P, Q;
 	public static final String total_start = "TOTAL_START";
@@ -17,7 +19,7 @@ public class ResultSet {
 	public static final String initString = "INIT";
 	public static final int initValue = -1;
 	public static final int errorValue = -999;
-	public static final String unrecognizeString = "UNRECOGNIZED";
+	public static final String UNRECOGNIZED_STR = "UNRECOGNIZED";
 	
 	public static final String STATE_SUCCESS = "success";
 	public static final String STATE_TIMEOUT = "timeout";
@@ -27,10 +29,19 @@ public class ResultSet {
 	public static final String parseErrorString = "NUMBER_PARSE_ERROR";
 	
 	Map<String, Object> resultMap = null;
-	public ResultSet(TestCase testCase){
-		this.N = testCase.N;
-		this.P = testCase.P;
-		this.Q = testCase.Q;
+	public ResultSet(Object testCase){
+		if(testCase instanceof TestCase){
+			TestCase testCase1 = (TestCase)testCase; 
+			this.N = testCase1.N;
+			this.P = testCase1.P;
+			this.Q = testCase1.Q;	
+		}else if(testCase instanceof SudokuFile){
+			SudokuFile testCase1 = (SudokuFile)testCase; 
+			this.N = testCase1.getN();
+			this.P = testCase1.getP();
+			this.Q = testCase1.getQ();
+		}
+		
 		
 		resultMap = new HashMap<String, Object>();
 		
@@ -101,31 +112,42 @@ public class ResultSet {
 					resultMap.put(feedKey.toUpperCase(), ResultSet.parseErrorValue);
 				}
 			}else if(ResultSet.status.equals(feedKey.toUpperCase())){
-				if(feedValue.toUpperCase().equals(ResultSet.STATE_SUCCESS) ||
-						feedValue.toUpperCase().equals(ResultSet.STATE_TIMEOUT) ||
-						feedValue.toUpperCase().equals(ResultSet.STATE_ERROR) ){
+				if(feedValue.toUpperCase().equals(ResultSet.STATE_SUCCESS.toUpperCase()) ||
+						feedValue.toUpperCase().equals(ResultSet.STATE_TIMEOUT.toUpperCase()) ||
+						feedValue.toUpperCase().equals(ResultSet.STATE_ERROR.toUpperCase()) ){
 					resultMap.put(feedKey.toUpperCase(), feedValue.toUpperCase());
 				}
 				else{
-					resultMap.put(feedKey.toUpperCase(), ResultSet.unrecognizeString);
+					resultMap.put(feedKey.toUpperCase(), ResultSet.UNRECOGNIZED_STR);
 				}
 					
 					
 			}else if(ResultSet.solution.equals(feedKey.toUpperCase())){
-				String[] solParts = feedValue.split(",");
+				System.out.println("feedValue: "+feedValue);;
+				String[] solParts = feedValue.split("[^0-9]");
+				String[] solPartsTrim = new String[solParts.length];
+				int validCnt = 0;
+				for(int ii = 0 ; ii < solParts.length ; ii++){
+					if(solParts[ii].trim().length() > 0){
+						solPartsTrim[validCnt] = solParts[ii].trim();
+						validCnt++;
+					}
+					
+				}
 				//System.out.println("solParts : "+solParts.length+", N:"+N);
-				if(solParts.length == N*N){
+				//f(solPartsTrim.length == N*N){
 					int[][] result = (int[][]) resultMap.get(solution);
-					for(int i = 0 ; i < solParts.length ; i++){
+					for(int i = 0 ; i < solPartsTrim.length && i < N*N ; i++){
 						try{
-							result[(i)/(N)][(i)%(N)] = Integer.parseInt(solParts[i].trim());
+							result[(i)/(N)][(i)%(N)] = Integer.parseInt(solPartsTrim[i].trim());
 						}catch(Exception e){
+							e.printStackTrace();
 							result[(i)/(N)][(i)%(N)] = parseErrorValue;
 						}
 					}
 					
 					resultMap.put(feedKey.toUpperCase(), result);
-				}
+				//}
 			}
 		}
 	}
@@ -184,5 +206,19 @@ public class ResultSet {
 		return Q;
 	}
 	
+	public static void main(String[] args){
+		String feedValue = "(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)";
+		String[] solParts = feedValue.split("[^0-9]");
+		for(int i = 0 ; i < solParts.length ; i++){
+			System.out.println(i+" "+solParts[i]);
+		}
+		System.out.println(solParts.length);
+		for(int i = 0 ; i < solParts.length ; i++){
+			if(solParts[i].trim().length()>0){
+				System.out.println(i+" "+solParts[i]);
+			}
+		}
+		
+	}
 	
 }
