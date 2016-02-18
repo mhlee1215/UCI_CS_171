@@ -133,48 +133,60 @@ public class SudokuGeneratorTester {
 
 
 			//Run
-			try {
-				String exeString = exePath+" "+tmpInput+" "+tmpOutput+" "+timeLimit+" "+types;
-				if(exePath.endsWith(".class"))
-					exeString = "java "+exeString;
-				else if(exePath.endsWith(".jar"))
-					exeString = "java -jar "+exeString;
-				else if(exePath.endsWith(".py"))
-					exeString = "python "+exeString;
-				else
-					exeString = "./"+exeString;
-
-				System.out.println("Executed Command : "+exeString);
-				Process p =Runtime.getRuntime().exec(exeString);
-				p.waitFor();
-
-				//Process proc = rt.exec(commands);
-
-				BufferedReader stdInput = new BufferedReader(new 
-						InputStreamReader(p.getInputStream()));
-
-				BufferedReader stdError = new BufferedReader(new 
-						InputStreamReader(p.getErrorStream()));
-
-				// read the output from the command
-				System.out.println(">>Here is the standard output of the command (if any):\n");
-				String s = null;
-				while ((s = stdInput.readLine()) != null) {
-					System.out.println(s);
-				}
-
-				// read any errors from the attempted command
-				System.out.println(">>Here is the standard error of the command (if any):\n");
-				while ((s = stdError.readLine()) != null) {
-					System.out.println(s);
-				}
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			List<String> cmdList = new ArrayList<String>();
+			String exeString = exePath+" "+tmpInput+" "+tmpOutput+" "+timeLimit+" "+types;
+			if(exePath.endsWith(".class")){
+				exeString = "java "+exeString;
+				cmdList.add(exeString);
+			}else if(exePath.endsWith(".jar")){
+				exeString = "java -jar "+exeString;
+				cmdList.add(exeString);
+			}else if(exePath.endsWith(".py")){
+				exeString = "python "+exeString;
+				cmdList.add("module load python/3.3.5");
+				cmdList.add("alias python=python3");
+				cmdList.add(exeString);
+			}else{
+				exeString = "./"+exeString;
+				cmdList.add(exeString);
 			}
+			
+			
+			
+			for(String exeCmd : cmdList){
+				try {
+					System.out.println("Executed Command : "+exeCmd);
+					Process p =Runtime.getRuntime().exec(exeCmd);
+					p.waitFor();
 
+					//Process proc = rt.exec(commands);
 
+					BufferedReader stdInput = new BufferedReader(new 
+							InputStreamReader(p.getInputStream()));
+
+					BufferedReader stdError = new BufferedReader(new 
+							InputStreamReader(p.getErrorStream()));
+
+					// read the output from the command
+					System.out.println(">>Here is the standard output of the command (if any):\n");
+					String s = null;
+					while ((s = stdInput.readLine()) != null) {
+						System.out.println(s);
+					}
+
+					// read any errors from the attempted command
+					System.out.println(">>Here is the standard error of the command (if any):\n");
+					while ((s = stdError.readLine()) != null) {
+						System.out.println(s);
+					}
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			
 			if(optMap.get(TestCase.opt_gen)!=null){
 				validCheckGEN(i, tmpOutput);	
 			}else{
